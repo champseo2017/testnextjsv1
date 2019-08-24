@@ -15,7 +15,7 @@ class Layout extends Component {
       }
     render() {
         return (
-            <div className="justify-content-between">
+            <div>
             <Head>
                 <title>BitzPrice</title>
                 <link rel="stylesheet" href="https://bootswatch.com/4/cerulean/bootstrap.min.css"/>
