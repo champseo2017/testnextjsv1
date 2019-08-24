@@ -1,21 +1,28 @@
 const express = require('express');
+const next = require('next')
+const dev = process.env.NODE_ENV !== 'production'
+const app = next({dev})
+const handle = app.getRequestHandler()
+
 const port = process.env.PORT || 3000;
-const app = express();
-const bodyParser = require('body-parser')
 
-app.use(function(req, res, next) {
+app
+    .prepare()
+    .then(()=>{
+        const server = express()
 
-    res.header("Access-Control-Allow-Origin", '*');
-    res.header("Access-Control-Allow-Credentials", true);
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-    res.header("Access-Control-Allow-Headers", 'Authorization,Access-Control-Allow-Origin,Origin,X-Requested-With,Content-Type,Accept,content-type,application/json');
-    next();
+        server.get('/p/:id', (req, res) => {
+            const actualPage = '/post'
+            const queryParams = {title: req.params.id}
+            app.render(req, res, actualPage, queryParams)
+        })
 
-});
+        server.get('*', (req, res) => {
+            return handle(req, res)
+        })
 
-app.use(bodyParser.urlencoded({extended:true}))
-app.use(bodyParser.json({type:'*/*'}))
-
-app.listen(port, function () {
- console.log(`app listening on port !` + port);
-});
+        server.listen(port, err => {
+            if(err) throw err
+            console.log('Ready on https://localhost:' + port)
+        })
+    })
