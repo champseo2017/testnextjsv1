@@ -32,7 +32,7 @@ class Contact extends Component {
             },
             headers: {
                 'Content-Type': 'application/json;charset=UTF-8',
-                "Access-Control-Allow-Origin": "*"
+                "Access-Control-Allow-Origin": "https://shielded-stream-74873.herokuapp.com"
             }
           })
           .then(function (response) {
