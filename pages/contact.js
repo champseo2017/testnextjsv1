@@ -4,6 +4,7 @@ import Contactconfirm from '../components/Contactconfirm'
 import axios from 'axios';
 
 class Contact extends Component {
+    
     state = {
         step: 1,
         contact_name: '',
@@ -12,38 +13,36 @@ class Contact extends Component {
         contact_message:'',
         confirmsend:'',
     }
-
+   
     // Proceed to next step
     nextStep = () => {
         let contact_name = this.state.contact_name
         let contact_email = this.state.contact_email
         let contact_phone = this.state.contact_phone
         let contact_message = this.state.contact_message
-       
-
+        let confirmsend = this.state.confirmsend
+        let self = this;
         axios({
             method: "post",
-            url: `https://wordpressapi1.saleallday.com/wp-json/contact/v1/send`,
+            url: "https://restapiwp.saleallday.com/wp-json/contact/v1/send",
             data: { 
                 contact_name:contact_name,
                 contact_email:contact_email,
                 contact_phone:contact_phone,
                 contact_message:contact_message
-            },
-            headers: {
-                "Access-Control-Allow-Origin": "https://shielded-stream-74873.herokuapp.com"
             }
           })
           .then(function (response) {
-            this.setState({
-                confirmsend:1
-            })
-            console.log(response);
+            if(response.data.sucess == 1){
+                self.setState({confirmsend: 1})
+            }
           })
           .catch(function (error) {
             console.log(error);
           });
     }
+
+   
 
     // Go back to prev step
     resetinput = () => {
@@ -63,13 +62,14 @@ class Contact extends Component {
     render() {
         const {step} = this.state;
         const {contact_name, contact_email, contact_phone, contact_message, confirmsend} = this.state 
-        
+        const sucesssend = {confirmsend}
         const values = {contact_name, contact_email, contact_phone, contact_message}
         switch(step){
             case 1 :
                 return (
                     <Contacts
                         nextStep={this.nextStep}
+                        sucesssend = {sucesssend}
                         resetinput={this.resetinput}
                         handleChange={this.handleChange}
                         values={values}
