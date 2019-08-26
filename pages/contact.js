@@ -31,7 +31,6 @@ class Contact extends Component {
                 contact_message:contact_message
             },
             headers: {
-                'Content-Type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "https://shielded-stream-74873.herokuapp.com"
             }
           })
