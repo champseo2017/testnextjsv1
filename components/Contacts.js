@@ -3,7 +3,7 @@ import Layout from "./Layout";
 import $ from "jquery";
 import NextSeo from 'next-seo';
 import swal from 'sweetalert';
-
+import LoadingOverlay from 'react-loading-overlay';
 
 // let's create a configuration for next-seo
 const DEFAULT_SEO = {
@@ -15,7 +15,7 @@ class Contacts extends Component {
       showAlert:true,
       titleAlert:"Contact Us",
       messageAlert: "ขอบคุณที่ติดต่อเรา",
-      typeAlert:"text"
+      typeAlert:"text",
     }
     componentDidMount() {
         let heightcheck = this.sectionheight.offsetHeight
@@ -35,43 +35,44 @@ class Contacts extends Component {
         e.preventDefault();
         this.props.resetinput();
       }
+      
     render() {
-    
-      const {values, handleChange, sucesssend} = this.props
+      const {values, handleChange, sucesssend, loading} = this.props
+     
       let objsucess = ''
         if(sucesssend.confirmsend == 1){
-          
-
           let promise1 = new Promise(function(resolve, reject) {
               resolve(sucesssend.confirmsend);
           });
-          
           promise1.then(function(value) {
             if(value){
               objsucess =  swal({
                 title: "Done!",
                 text: "Thank you for contacting us.",
                 icon: "success",
-                timer: 5000,
+                timer: 3000,
                 button: false
               })
               setTimeout(function(){ 
                 window.location.href = '/contact';
-               }, 6000);
+               }, 4000);
               
             }
           });
          
-      
         }else{
           objsucess = ''
         }
         return (
             <Layout>
-            
             {/* Then we pass the config to the plugin */}
+            <LoadingOverlay
+            active={loading ? true:false}
+            spinner
+            text='Loading your content...'
+            >
             <section className="mb-4" ref={(section) =>{this.sectionheight = section; }}>
-
+            
             <h2 className="h1-responsive font-weight-bold text-center my-4">Contact us</h2>
             
               {objsucess}
@@ -85,25 +86,29 @@ class Contacts extends Component {
                   <div className="row">
                   <div className="col-md-6">
                         <div className="md-form mb-0">
-                            <input 
-                              type="text" 
+                            <input
+                              type="text"
+    style={(sucesssend.confirmsend.error == 1 && sucesssend.confirmsend.name == '') ? {border: "1px solid red"} : {}}
                               className="form-control"
                               onChange={handleChange('contact_name')}
                               value={values.contact_name}
                               placeholder="You name"
                               />
+  {(sucesssend.confirmsend.error == 1 && sucesssend.confirmsend.name == '') ? <span>กรุณากรอกชื่อ</span> :""}
                         </div>
                     </div>
 
                     <div className="col-md-6">
                         <div className="md-form mb-0 mobile">
                             <input 
-                              type="text" 
+                              type="text"
+    style={(sucesssend.confirmsend.error == 1 && sucesssend.confirmsend.email == '') ? {border: "1px solid red"} : {}}
                               className="form-control"
                               onChange={handleChange('contact_email')}
                               value={values.contact_email}
                               placeholder="You email"
                               />
+      {(sucesssend.confirmsend.error == 1 && sucesssend.confirmsend.email == '') ? <span>กรุณากรอก Email</span> :""}
                         </div>
                     </div>
 
@@ -113,12 +118,14 @@ class Contacts extends Component {
                     <div className="col-md-12">
                         <div className="md-form mt-3">
                             <input 
-                              type="text" 
+                              type="text"
+  style={(sucesssend.confirmsend.error == 1 && sucesssend.confirmsend.phone == '') ? {border: "1px solid red"} : {}} 
                               className="form-control"
                               onChange={handleChange('contact_phone')}
                               value={values.contact_phone}
                               placeholder="You Phone"
                             />
+    {(sucesssend.confirmsend.error == 1 && sucesssend.confirmsend.phone == '') ? <span>กรุณากรอกเบอร์โทรศัพท์</span> :""}
                         </div>
                     </div>
                 </div>
@@ -128,7 +135,8 @@ class Contacts extends Component {
 
                       <div className="md-form mt-3">
                           <textarea 
-                          type="text" 
+                          type="text"
+  style={(sucesssend.confirmsend.error == 1 && sucesssend.confirmsend.message == '') ? {border: "1px solid red"} : {}} 
                           placeholder="Your message" 
                           rows="2"
                           value={values.contact_message}
@@ -136,7 +144,7 @@ class Contacts extends Component {
                           onChange={handleChange('contact_message')}
                           ></textarea>
                       </div>
-
+{(sucesssend.confirmsend.error == 1 && sucesssend.confirmsend.message == '') ? <span>กรุณากรอกข้อความที่จะติดต่อเรา</span> :""}
                   </div>
                 </div>
                 </form>
@@ -164,8 +172,10 @@ class Contacts extends Component {
               </div>
 
             </div>
+            
 
              </section>
+             </LoadingOverlay>
              <NextSeo config={DEFAULT_SEO} />
              <style jsx>{`
              @media (max-width: 480px) { 
